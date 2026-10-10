@@ -2,6 +2,8 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import AdminLayout from './components/layout/AdminLayout'
 import Dashboard from './features/dashboard/Dashboard'
+import Login from './features/auth/Login'
+import ProtectedRoute from './routes/ProtectedRoutes'
 import './App.css'
 
 const menuPages = [
@@ -32,16 +34,22 @@ function Placeholder({ title }) {
 export default function App() {
   return (
     <Routes>
-      <Route element={<AdminLayout />}>
-        <Route index element={<Dashboard />} />
-        {menuPages.map(([title, path]) => (
-          <Route
-            key={path}
-            path={path}
-            element={<Placeholder title={title} />}
-          />
-        ))}
+      <Route path="/login" element={<Login />} />
+
+      <Route element={<ProtectedRoute />}>
+        <Route element={<AdminLayout />}>
+          <Route index element={<Dashboard />} />
+
+          {menuPages.map(([title, path]) => (
+            <Route
+              key={path}
+              path={path}
+              element={<Placeholder title={title} />}
+            />
+          ))}
+        </Route>
       </Route>
+
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )

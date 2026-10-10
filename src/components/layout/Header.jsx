@@ -2,9 +2,23 @@
 import { useState } from 'react'
 import { Menu, Search, Sun, Palette, Bell } from 'lucide-react'
 
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../features/auth/AuthContext'
+import { LogOut } from 'lucide-react'
+
 export default function Header({ onToggleSidebar }) {
   const [search, setSearch] = useState('')
+  const { admin, logout } = useAuth()
+  const navigate = useNavigate()
 
+  const handleLogout = async () => {
+    try {
+      await logout()
+      navigate('/login', { replace: true })
+    } catch {
+      // Keep the current session state if the request fails.
+    }
+  }
   return (
     <header className="sticky top-0 z-30 flex h-[72px] items-center justify-between border-b border-slate-200 bg-white px-5 md:px-8">
       <button
@@ -52,7 +66,16 @@ export default function Header({ onToggleSidebar }) {
           <Bell size={23} />
           <span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-fuchsia-500" />
         </button>
+        <button
+          type="button"
+          onClick={handleLogout}
+          title={`Sign out${admin?.name ? ` (${admin.name})` : ''}`}
+          className="text-slate-500 transition hover:text-red-600"
+        >
+          <LogOut size={21} />
+        </button>
       </div>
+      
     </header>
   )
 }
